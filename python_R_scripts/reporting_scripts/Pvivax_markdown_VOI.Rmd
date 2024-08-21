@@ -1,0 +1,75 @@
+---
+title: "CDC Plasmodium vivax Genotyping Report"
+output: html_document
+self-contained: yes
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+
+___
+
+
+# Document Control: 
+#### `r  doc_control`
+
+
+
+## Date of Report Generation: 
+#### `r date_now`
+
+## Partner Lab:
+#### `r stateID`
+___
+
+# Background/Guidelines 
+
+## Plasmodium vivax genotyping background
+
+The Centers for Diease Control and Prevention (CDC) developed a highly-multiplex genotyping approach using Illumina's AmpliSeq technology to perform surveillance of *Plasmodium vivax* cases in the United States (both travel related and autochthonous). The genotyping assay encompasses 495 amplicons across all 14 regions of the *P. vivax* PvP01 reference genome<sup>1</sup> and has three primary goals:
+
+1) Report World Health Organization (WHO) reportable drug resistance mutations for *P. vivax*<sup>2</sup>.
+2) Predict most likely geographic region of origin for the origin of the *P. vivax* infection.
+3) Genetic clustering to identify closely related strains of *P. vivax*.
+
+## Drug Resistance Profiling Background
+
+Drug resistance is predicted by following the *malaria resistance surveillance* (MARS) protocol developed at CDC<sup>3</sup>. MARS was written to identify drug resistance in *P. falciparum* and here, we have adapted the MARS protocol to identify drug resistance mutations in *P. vivax*. We report on WHO reportable SNPs in the following *P. vivax* genes: 
+
+Pvdphs (Dihydropteroate synthase) - Sulfadoxine, Chloroquine resistance
+
+Pvmdr1 (Multidrug resistance transporter) - Chloroquine resistance
+
+Pvdhfr (Dihydrofolate reductase) - Pyrimethamine resistance
+
+Pvcrt (Chloroquine resistance transporter) - Chloroquine resistance
+
+The amplicons used in CDC's AmpliSeq assay were identified in Kattenberg 2021<sup>4</sup>.
+
+## Geographic Prediction Profiling Background
+
+Geographic origin is predicted using a Biallelic Likelihood (BALK) classifier, first described here <sup>5</sup>. The BALK classifier uses a reference population with samples from a known geographic origin to build a model that links geographic region with a SNP profile. We built a reference population with samples from MalariaGen Pv4<sup>6</sup>, which represent a worldwide selection of *P. vivax* samples. The geographic prediction model is composed of 113 SNPs that were originally identified as part of the geo33, geo50, and geo55 geographic prediction assay in Kattenberg 2021<sup>4</sup> and Trimarsanto 2022<sup>5</sup>.
+
+## Genetic Clustering Background
+
+*P. vivax* strain identification is modeled after the CYCLONE<sup>8</sup> approach developed at CDC for *Cyclospora* food-borne outbreak surveillance. The *P. vivax* pipeline uses all 495 amplicons in the AmpliSeq assay and identifies haplotypes at each marker in each sample. We then calculate a pairwise distance matrix and idenitify closely related isolates as outlined here<sup>8</sup>. These closely related isolates within each cluster can be considered the same strain for the purposes of this report. 
+
+___
+
+# Results
+
+In each VOI column the values in the brackets represent: Type of Mutation, Average Coverage for SNP, Variant Allele Frequency 
+
+```{r, echo = F, results='markup', message = F, warning = F}
+
+	perSample_VOI
+```
+
+
+

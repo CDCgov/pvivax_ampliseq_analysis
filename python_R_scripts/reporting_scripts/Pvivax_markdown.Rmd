@@ -1,0 +1,107 @@
+---
+title: "CDC *Plasmodium* Genotyping Report"
+output: html_document
+self-contained: yes
+---
+
+<style type="text/css">
+.main-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
+
+
+___
+
+# Document Control: 
+#### `r  doc_control`
+
+## Date of Report Generation: 
+#### `r date_now`
+
+## Partner Lab:
+#### `r stateID`
+___
+
+# Preliminary Genotyping Results {.tabset}
+
+## Background and Interpretative Guidelines
+
+### Reporting test results
+
+These results are intended for public health purposes only and must NOT be communicated to the patient, their care provider, or placed in the patient’s medical record. These results should NOT be used for diagnosis, treatment, or assessment of patient health or management.
+
+### *Plasmodium falciparum* Genotyping Background
+
+#### *Plasmodium vivax* Genotyping Background
+
+The Centers for Disease Control and Prevention (CDC) developed a highly-multiplex genotyping approach using Illumina's AmpliSeq technology to perform surveillance of *Plasmodium vivax* cases in the United States[^1] (both travel related and autochthonous). The genotyping assay encompasses 495 amplicons across all 14 chromosomes of the *P. vivax* PvP01 reference genome and has two primary goals:
+
+1) Predict most likely geographic region of origin of the *P. vivax* infection.
+2) Genetic clustering to identify closely related samples of *P. vivax*.
+
+This report lists the genetic cluster membership for all samples from `r stateID` that were successfully genetically clustered and provides a tree that shows the relationship between clinical samples and a limited reference population. This report also includes the most likely geographic region of origin for *P. vivax* parasites sequenced from each sample.
+
+#### Genetic Clustering Background
+
+*P. vivax* cluster identification is adapted from the CYCLONE[^2] approach developed at CDC for *Cyclospora* food-borne outbreak surveillance. The *P. vivax* pipeline uses 495 amplicons in the AmpliSeq assay and identifies haplotypes at each marker in each sample. We then calculate a pairwise distance matrix from the haplotypes shared between samples and identify closely related samples belonging to the same cluster.
+
+##### Geographic Origin Prediction Background
+
+Using an analysis tool that is independent of the genetic clustering approach discussed above, we selected a subset of markers (sequenced via the same AmpliSeq approach described above) to predict the most likely geographic region of origin for the samples in our dataset. Geographic prediction is limited to the regions in the table below and we are unable to predict country of origin. We report the most likely geographic region of origin in this report. Please contact CDC's Malaria Genotyping POC[^3] for a list of countries within each region.
+
+```{r, echo = F, results='markup', message = F, warning = F}
+
+	geoKable
+```
+##### Use of these data
+
+The results below should always be considered in conjunction with available epidemiologic data. For example, a genetic link (i.e., detecting two samples of the same cluster) may be used retrospectively as additional evidence to support an already existing epidemiologic hypothesis (e.g., two *P. vivax* malaria cases that may be related due to their occurrence at a similar time and place). This is because we cannot exclude the possibility that two patients may have become infected with the same strain of parasite by coincidence. Therefore, these genetic clustering data should be viewed as a piece of evidence to support an existing epidemiologic hypothesis.
+
+___
+
+### Specimen Submission Summary
+
+how many samples submitted, tested, processed, etc, species
+
+
+
+### Results Table
+<br>
+The table below lists each clinically sequenced samples from `r stateID` and its associated metadata. Each distinct genetic cluster is demarcated by the purple bars above and below the last sample in the cluster. 
+
+The Region_Prediction_1 column lists the most likely region of origin for the parasites found in the sample, based on a likelihood classifier built from a reference population of approximately 1,000 samples from the MalariaGEN Pv4 data release[^4]. The probability that the sample belongs to the geographic region indicated is given in parenthesis.
+
+
+#### Download link for the table below
+```{r, echo = F}
+xfun::embed_file(csvName)
+```
+
+#### Genetic Clusters Table
+```{r, echo = F, results='markup', message = F, warning = F}
+
+	kable_out
+```
+
+### Clustering
+
+The tree below depicts genetic relationships amongst *P. vivax* samples, representing eight distinct geographic regions. The dataset contains samples that were available in public databases as well as samples from CDC’s archive of confirmed *P. vivax* positive samples. To analyze the *P. vivax* samples in CDC’s archive, a Next-Generation Sequencing (NGS) approach based on Illumina AmpliSeq technology was used, which targeted 415 regions across all 14 chromosomes of the *P. vivax* genome. After running our custom bioinformatic pipeline on the resultant sequence data, we clustered samples together based on the number of sequence variants shared between them. When looking at the outside ring of the tree, samples sharing a close genetic relationship that are labelled with peripheral bars of the same color, are considered to be members of a closely related parasite cluster. Parasite samples are assigned to the same cluster   if the genetic distance between them falls below a certain genetic threshold that is computed automatically by our workflow using a statistical approach. Samples that are not marked with the same-colored bars are not considered to be members of the same cluster.
+
+#### Geographic origin prediction
+
+After running our geographic analysis, we map the geographic prediction results onto the tree, which can be seen when looking at the colored branches originating from the center of the tree (note the color coding in the legend on the top of the tree). 
+
+```{r out.width="100%", out.height="1000", echo=FALSE, fig.align = 'center'}
+  knitr::include_graphics(treeFile)
+```
+___
+
+### References
+[^1]: P vivax manuscript in development at CDC
+[^2]: Nascimento, Fernanda S., et al. "Evaluation of an ensemble-based distance statistic for clustering MLST datasets using epidemiologically defined clusters of cyclosporiasis." Epidemiology & Infection 148 (2020): e172.
+[^3]: CDC Malaria Genotyping POC: David Jacobson (quh7@cdc.gov)
+[^4]: Adam, Ishag, et al. "An open dataset of Plasmodium vivax genome variation in 1,895 worldwide samples." Wellcome open research 7 (2022).
+
