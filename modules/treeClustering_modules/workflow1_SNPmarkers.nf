@@ -74,7 +74,8 @@ process mapping {
 
   input:
   path(refHaps)
-  each(sample_files)
+  // each(sample_files)
+  tuple val(sampleID), path(sample_files)
 
   output:
   path '*.mapped_only.sam', emit: mappedOnlySam
@@ -84,13 +85,17 @@ process mapping {
 
   which samtools > samtoolsTestingMapping.file
   which bwa > bwaTstingMapping.file
-  bwa index ${refHaps}
-  bwa mem -t ${params.threads} ${refHaps} ${sample_files} > ${sample_files.simpleName}.alignment.sam
-  samtools view -h -F 4 ${sample_files.simpleName}.alignment.sam | samtools view -bS > ${sample_files.simpleName}.mapped_only.sam 
 
-  samtools fastq ${sample_files.simpleName}.mapped_only.sam > ${sample_files.simpleName}.mapped_only.fastq
+  bwa index ${refHaps}
+  
+  bwa mem -t ${params.threads} ${refHaps} ${sample_files[0]} ${sample_files[1]} > ${sampleID}.alignment.sam
+  samtools view -h -F 4 ${sampleID}.alignment.sam | samtools view -bS > ${sampleID}.mapped_only.sam 
+
+  samtools fastq ${sampleID}.mapped_only.sam > ${sampleID}.mapped_only.fastq
   """
 }
+
+// bwa mem -t ${params.threads} ${refHaps} ${sample_files} > ${sample_files.simpleName}.alignment.sam
 
 // This sam to fastq step is rquired with renaming the sequences. If you just do use the samtools fastq convert, you will get incorrect haplotypes for some reason
 process mapping2fastq {
