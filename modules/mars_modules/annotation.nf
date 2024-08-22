@@ -36,27 +36,27 @@ process annotation {
       script:
       """
 
-      java -Xmx${params.bbmergeRAM} -jar /usr/local/bin/snpEff/snpEff.jar -c ${dbDir}/snpEff.config -hgvs1LetterAa -noShiftHgvs ${params.dbName} ${sample_id}_Freebayes.vcf > ${sample_id}_Freebayes_ann.vcf
-      java -Xmx${params.bbmergeRAM} -jar /usr/local/bin/snpEff/snpEff.jar -c ${dbDir}/snpEff.config -hgvs1LetterAa -noShiftHgvs ${params.dbName} ${sample_id}_gatk.vcf > ${sample_id}_gatk_ann.vcf
-      java -Xmx${params.bbmergeRAM} -jar /usr/local/bin/snpEff/snpEff.jar -c ${dbDir}/snpEff.config -hgvs1LetterAa -noShiftHgvs ${params.dbName} ${sample_id}_samtools.vcf > ${sample_id}_samtools_ann.vcf
-      java -Xmx${params.bbmergeRAM} -jar /usr/local/bin/snpEff/snpEff.jar -c ${dbDir}/snpEff.config -hgvs1LetterAa -noShiftHgvs ${params.dbName} ${sample_id}_vardict.vcf > ${sample_id}_vardict_ann.vcf
+      java -Xmx${params.bbmergeRAM} -jar -XX:-UsePerfData /usr/local/bin/snpEff/snpEff.jar -c ${dbDir}/snpEff.config -hgvs1LetterAa -noShiftHgvs ${params.dbName} -nolog  ${sample_id}_Freebayes.vcf > ${sample_id}_Freebayes_ann.vcf
+      java -Xmx${params.bbmergeRAM} -jar -XX:-UsePerfData /usr/local/bin/snpEff/snpEff.jar -c ${dbDir}/snpEff.config -hgvs1LetterAa -noShiftHgvs ${params.dbName} -nolog  ${sample_id}_gatk.vcf > ${sample_id}_gatk_ann.vcf
+      java -Xmx${params.bbmergeRAM} -jar -XX:-UsePerfData /usr/local/bin/snpEff/snpEff.jar -c ${dbDir}/snpEff.config -hgvs1LetterAa -noShiftHgvs ${params.dbName} -nolog  ${sample_id}_samtools.vcf > ${sample_id}_samtools_ann.vcf
+      java -Xmx${params.bbmergeRAM} -jar -XX:-UsePerfData /usr/local/bin/snpEff/snpEff.jar -c ${dbDir}/snpEff.config -hgvs1LetterAa -noShiftHgvs ${params.dbName} -nolog  ${sample_id}_vardict.vcf > ${sample_id}_vardict_ann.vcf
 
-        grep -v "because it is locked by another process" ${sample_id}_gatk_ann.vcf > ${sample_id}_gatk_tmp.vcf
-        mv ${sample_id}_gatk_tmp.vcf  ${sample_id}_gatk_ann.vcf
-
-        grep -v "because it is locked by another process" ${sample_id}_Freebayes_ann.vcf > ${sample_id}_Freebayes_tmp.vcf
-        mv ${sample_id}_Freebayes_tmp.vcf  ${sample_id}_Freebayes_ann.vcf
-
-        grep -v "because it is locked by another process" ${sample_id}_samtools_ann.vcf > ${sample_id}_samtools_tmp.vcf
-        mv ${sample_id}_samtools_tmp.vcf  ${sample_id}_samtools_ann.vcf
-
-        grep -v "because it is locked by another process" ${sample_id}_vardict_ann.vcf > ${sample_id}_vardict_tmp.vcf
-        mv ${sample_id}_vardict_tmp.vcf  ${sample_id}_vardict_ann.vcf
-
-
+  
 
       """
 }
+
+      // grep -v "because it is locked by another process" ${sample_id}_gatk_ann.vcf > ${sample_id}_gatk_tmp.vcf
+      //   mv ${sample_id}_gatk_tmp.vcf  ${sample_id}_gatk_ann.vcf
+
+      //   grep -v "because it is locked by another process" ${sample_id}_Freebayes_ann.vcf > ${sample_id}_Freebayes_tmp.vcf
+      //   mv ${sample_id}_Freebayes_tmp.vcf  ${sample_id}_Freebayes_ann.vcf
+
+      //   grep -v "because it is locked by another process" ${sample_id}_samtools_ann.vcf > ${sample_id}_samtools_tmp.vcf
+      //   mv ${sample_id}_samtools_tmp.vcf  ${sample_id}_samtools_ann.vcf
+
+      //   grep -v "because it is locked by another process" ${sample_id}_vardict_ann.vcf > ${sample_id}_vardict_tmp.vcf
+      //   mv ${sample_id}_vardict_tmp.vcf  ${sample_id}_vardict_ann.vcf
 
 
 
@@ -72,9 +72,9 @@ process vartype {
 
     script:
         """
-        java -Xmx${params.bbmergeRAM} -jar /usr/local/bin/snpEff/SnpSift.jar varType ${sample_id}_samtools_ann.vcf > ${sample_id}_samtools_vartype.vcf
-        java -Xmx${params.bbmergeRAM} -jar /usr/local/bin/snpEff/SnpSift.jar varType ${sample_id}_Freebayes_ann.vcf > ${sample_id}_freeBayes_vartype.vcf
-        java -Xmx${params.bbmergeRAM} -jar /usr/local/bin/snpEff/SnpSift.jar varType ${sample_id}_gatk_ann.vcf > ${sample_id}_HaplotypeCaller_vartype.vcf
-        java -Xmx${params.bbmergeRAM} -jar /usr/local/bin/snpEff/SnpSift.jar varType ${sample_id}_vardict_ann.vcf > ${sample_id}_vardict_vartype.vcf
+        java -Xmx${params.bbmergeRAM} -jar -XX:-UsePerfData /usr/local/bin/snpEff/SnpSift.jar varType -nolog ${sample_id}_samtools_ann.vcf > ${sample_id}_samtools_vartype.vcf
+        java -Xmx${params.bbmergeRAM} -jar -XX:-UsePerfData /usr/local/bin/snpEff/SnpSift.jar varType -nolog ${sample_id}_Freebayes_ann.vcf > ${sample_id}_freeBayes_vartype.vcf
+        java -Xmx${params.bbmergeRAM} -jar -XX:-UsePerfData /usr/local/bin/snpEff/SnpSift.jar varType -nolog ${sample_id}_gatk_ann.vcf > ${sample_id}_HaplotypeCaller_vartype.vcf
+        java -Xmx${params.bbmergeRAM} -jar -XX:-UsePerfData /usr/local/bin/snpEff/SnpSift.jar varType -nolog ${sample_id}_vardict_ann.vcf > ${sample_id}_vardict_vartype.vcf
         """
 }
