@@ -73,7 +73,7 @@ process mapping {
    label 'mappingSoftware'
 
   input:
-  path(refHaps)
+  each(refHaps)
   // each(sample_files)
   tuple val(sampleID), path(sample_files)
 
