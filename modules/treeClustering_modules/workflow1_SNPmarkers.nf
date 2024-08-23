@@ -363,7 +363,7 @@ process bedExtraction_v2 {
   perl ${params.multiSeq_pl} ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters.fasta ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters.fq.clstr ${sorted.simpleName[0]}.\$myName.newHaps_multi-seq \$newHaps_cutoff
 
   cat ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters.fq.clstr  | sed 's/Cluster /Cluster/g' > ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters_toCount.fq.clstr
-  python3 ${params.pyscripts}/treeClustering_scripts/cluster_counter.py -x ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters_toCount.fq.clstr -y ${sorted.simpleName[0]}.\$myName.clusterCounted.csv
+  python3 ${params.pyscripts}/treeClustering_scripts/cluster_counter_v2.py -x ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters_toCount.fq.clstr -y ${sorted.simpleName[0]}.\$myName.clusterCounted.csv
   
   fi
   """
@@ -450,7 +450,7 @@ process bedExtraction_plusNewHaps {
   perl ${params.multiSeq_pl} ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters.fasta ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters.fq.clstr ${sorted.simpleName[0]}.\$myName.newHaps_multi-seq \$newHaps_cutoff
 
   cat ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters.fq.clstr  | sed 's/Cluster /Cluster/g' > ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters_toCount.fq.clstr
-  python3 ${params.pyscripts}/treeClustering_scripts/cluster_counter.py -x ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters_toCount.fq.clstr -y ${sorted.simpleName[0]}.\$myName.clusterCounted.csv
+  python3 ${params.pyscripts}/treeClustering_scripts/cluster_counter_v2.py -x ${sorted.simpleName[0]}.\$myName.clean_merged_Clusters_toCount.fq.clstr -y ${sorted.simpleName[0]}.\$myName.clusterCounted.csv
   
   fi
 
@@ -887,7 +887,7 @@ process firstClustering_v2{
 
   if [ $clusLen -gt 0 ]
   then
-  python3 !{params.pyscripts}/treeClustering_scripts/cluster_counter.py -x !{clippedReads.simpleName}.toCount.fq.clstr -y !{clippedReads.simpleName}.clusterCounted.csv
+  python3 !{params.pyscripts}/treeClustering_scripts/cluster_counter_v2.py -x !{clippedReads.simpleName}.toCount.fq.clstr -y !{clippedReads.simpleName}.clusterCounted.csv
 
   cat !{clippedReads.simpleName}.list | while read j
   do
