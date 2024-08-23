@@ -383,28 +383,6 @@ workflow Workflow2and3_Pvivax{
 }
 
 
-workflow reportGeneration{
-  latestEnsembleMatrix = Channel.fromPath("$baseDir/ensemble_matrices/*_ALL_CHR_pairwisedistancematrix_H.csv").toSortedList().flatten().last()
-  latestParnasClusters = Channel.fromPath("$baseDir/clusters_detected/*_clusters.txt").toSortedList().flatten().last()
-  latestGeoPrediction = Channel.fromPath("$baseDir/treeFolder/*geoPrediction_simple.txt").toSortedList().flatten().last()
-  latestTravel = Channel.fromPath("$baseDir/treeFolder/*travel.txt").toSortedList().flatten().last()
-  latestFullTree = Channel.fromPath("$baseDir/treeFolder/*_Pvivax_allStates_tree.pdf").toSortedList().flatten().last()
-  fullMeta = params.metadata
-  latestReportableSNPs = Channel.fromPath("$baseDir/MaRS_output/Summary/*Reportable_snps.csv").toSortedList().flatten().last()
-  latestGATKRegion = Channel.fromPath("$baseDir/GeoPrediction_output/predictedOut/*_gatkRegion_prediction_withMetadata.txt").toSortedList().flatten().last()
-
-  if( params.reportState == "allStates"){
-    makeTree_full(latestEnsembleMatrix, latestParnasClusters, latestGeoPrediction,  latestTravel)
-    runReportGen_allStates(fullMeta, latestParnasClusters, latestGeoPrediction, makeTree_full.out.treeOut)
-    marsVOI_allStates(latestGATKRegion, latestReportableSNPs)
-  }
-  else{
-    makeTree_states(latestEnsembleMatrix, latestParnasClusters, latestGeoPrediction, latestTravel)
-    runReportGen_singleState(fullMeta, latestParnasClusters, latestGeoPrediction, makeTree_states.out.stateTree)
-    marsVOI_singleState(latestGATKRegion, latestReportableSNPs)
-  }
-}
-
 workflow Workflow1through3_vivax {
   //workflow 1
   myReads = Channel.fromFilePairs("${params.fastqDir}/*_{R1,R2}_*.fastq.gz")
@@ -594,28 +572,6 @@ workflow everything {
   scaleMatrices(individualMats.out.matrixOut.collect(), individualChroms.out.chromHapSheet.collect())
   runModule3_Pvivax(scaleMatrices.out.finalMatrix)
   runModule3_parnas(runModule3_Pvivax.out.tree, runModule3_Pvivax.out.threshold)
-  // updateGeoPredictionDB(updatedDB)
-  // makeTree_full(scaleMatrices.out.finalMatrix, runModule3_parnas.out.clustersOutput, updateGeoPredictionDB.out.geoPredictionUpdate,  updateGeoPredictionDB.out.travelUpdate)
-  
-  // //report generation
-  // latestEnsembleMatrix = scaleMatrices.out.finalMatrix
-  // latestParnasClusters = runModule3_parnas.out.clustersOutput
-  // latestGeoPrediction = updateGeoPredictionDB.out.geoPredictionUpdate
-  // latestTravel = updateGeoPredictionDB.out.travelUpdate
-  // // latestFullTree = Channel.fromPath("$baseDir/treeFolder/*_Pvivax_allStates_tree.pdf").toSortedList().flatten().last()
-  // fullMeta = params.metadata
-  // latestReportableSNPs = Summary.out.Reportable_snps
-  // latestGATKRegion = mergePredictions.out.regionPredictionMerge
 
-  // if( params.reportState == "allStates"){
-  //   makeTree_full(latestEnsembleMatrix, latestParnasClusters, latestGeoPrediction,  latestTravel)
-  //   runReportGen_allStates(fullMeta, latestParnasClusters, latestGeoPrediction, makeTree_full.out.treeOut)
-  //   marsVOI_allStates( latestGATKRegion, latestReportableSNPs)
-  // }
-  // else{
-  //   makeTree_states(latestEnsembleMatrix, latestParnasClusters, latestGeoPrediction, latestTravel)
-  //   runReportGen_singleState(fullMeta, latestParnasClusters, latestGeoPrediction, makeTree_states.out.stateTree)
-  //   marsVOI_singleState(latestGATKRegion, latestReportableSNPs)
-  // }
 
 }

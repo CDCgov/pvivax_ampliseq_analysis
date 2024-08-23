@@ -17,7 +17,9 @@ Please cite the following paper when referencing this workflow:
 
 ### Contact
 Bioinformatic support: David Jacobson (quh7@cdc.gov)
+
 *P. vivax* genotyping inquiries: malarialab@cdc.gov
+
 General questions CDC's Domestic Parasite Surveillance: Joel Barratt (nsk9@cdc.gov)
 
 
@@ -25,6 +27,7 @@ General questions CDC's Domestic Parasite Surveillance: Joel Barratt (nsk9@cdc.g
 
 ### Software Dependencies
 **Nextflow**
+
 Our analysis workflow uses nextflow to execute commands, see [here](https://www.nextflow.io/docs/latest/index.html) for more information on installing and running nextflow. The pipeline is currently running on nextflow version `23.10.0` and uses [nextflow DSL 2](https://www.nextflow.io/blog/2020/dsl2-is-here.html), which was introduced in version `20.07.1`.
 
 The nextflow config file is in the `pvivax_ampliseq_analysis/nextflow_configFiles` folder. It contains the default parameters (e.g., RAM, threads, haplotype calling depth) and paths to a variety of reference files and python/R scripts. The reference parameters should not need to be changed if this repo is cloned from GitHub.
@@ -33,6 +36,7 @@ One line of the nextflow.config file may need to be changed to fit running in yo
 
 
 **Singularity**
+
 All other software dependencies are in a series of singularity containers, see [here](https://docs.sylabs.io/guides/latest/user-guide/). Please note that the containers were built with singularity version `3.8` and have not been tested on more recent singularity versions (e.g. versions `4.0` and above).
 
 The [nextflow config](nextflow_configFiles/nextflow.config) file uses the `withLabel` syntax to specify the container used for different processes. The default option is to use downloaded versions of the container; however, nextflow should be able to download the singularity container hosted on sylabs when the nextflow script is first executed. See example below, where the `balkClassifer` label is used for a specific SIF container and the option for downloading the container from a hosted site is commented out with `//`
@@ -48,9 +52,11 @@ If you want to download the containers and store local versions, please download
 
 
 **Additional Scripts**
+
 Python and R scripts used in the pipeline are stored in the `pvivax_ampliseq_analysis/python_R_scripts` folder. Users should not need to access/edits these scripts.
 
 **Data Format**
+
 FASTQ files must be paired, gzip compressed, and end in R1_001.fastq.gz / R2_001.fastq.gz for forward and reverse reads. The default location to place FASTQ files for entry into the workflow is the `TEST_DATA`` folder.
 
 ### Additional Installation Steps
@@ -84,19 +90,63 @@ Navigate to the `pvivax_ampliseq_analysis/Eukaryotpying-Python-main/` folder and
 ## Running the Workflow
 ### Options
 
-*TBD*
+Within the `main_pvivx_full.nf` there are different workflows that combine various elements of the pipeline.
+
+**Option 1**.  Run the complete workflow: read in FASTQs, drug resistance surveillance (MaRS), geographic prediction, and haplotype calling + clustering all at once.
+
+    nextflow run main_pvivax_full.nf  -entry everything -c nextflow_configFiles/nextflow.config -profile singularity -with-report nextflow_logFiles/report.html -with-trace nextflow_logFiles/trace.txt
+
+
+**Option 2**. Mars and GeoPrediction only - Call SNPs at MaRS markers for *P. vivax* (results in `MaRS_output`). Predict geographic origin for P. vivax. Region/country prediction will be merged with metadata (results in `GeoPrediction_output/predictedOut`)
+
+    nextflow run main_pvivax_full.nf  -entry P_vivax_MaRS_GeoPrediction -c nextflow_configFiles/nextflow.config -profile singularity -with-report nextflow_logFiles/report.html -with-trace nextflow_logFiles/trace.txt
+
+**Option 3A**. Haplotype calling without clustering. Can be used if you want to batch process the haploytpeing steps and then run distance matrix + clustering at the very end.
+
+    nextflow run main_pvivax_full.nf -entry Workflow1_v2_vivax -c nextflow_configFiles/nextflow.config -profile singularity -with-report nextflow_logFiles/report.html -with-trace nextflow_logFiles/trace.txt
+
+**Option 3B**. Generate haplotype sheeting without hap calling. If you need to generate a haplotype sheet from a specific set of samples and/or references. Use the `--hapSheet_specifcGenotypes` flag to give path to a folder with specific samples to incluede in the haplotype sheet. Use the `--hapSheet_specifcReferences` flag to give path to a folder with specific references to incluede in the haplotype sheet.
+
+    nextflow run main_pvivax_full.nf  -entry hapSheetOnly -c nextflow_configFiles/nextflow.config  -profile singularity -with-report nextflow_logFiles/report.html -with-trace nextflow_logFiles/trace.txt
+
+**Option 3C**. Distance matrix + clustering without haplotype calling. Use if you do not need to perform haplotype calling on any additional specimens and only need to perform clustering. By default, it will use the most recently generated haplotype sheet in the `haplotype_sheets`. Use the `--wf2HapSheet` flag to analyze a specific haplotype sheet.
+
+    nextflow run main_pvivax_full.nf  -entry Workflow2and3_Pvivax -c nextflow_configFiles/nextflow.config -profile singularity -with-report nextflow_logFiles/report.html -with-trace nextflow_logFiles/trace.txt
 
 ### Test the Workflow Installation
 
-*TBD*
+Contact David Jacobson (quh7@cdc.gov) or the CDC malaria genotyping inbox (malarialab@cdc.gov) to request data for testing your workflow installation.
 
 ### Workflow Outputs
 
+The primary workflow outputs are below
+
 **Haplotype Calling and Clustering**
+
+1) A genotype for each specimen will be in the `HAPLOTYPE_CALLER_PVIVAX/SPECIMEN_GENOTYPES`
+   
+2) A haplotype sheet with genotypes for all specimens in the `SPECIMEN GENOTYPES` and `PVIVAX_REF_GENOTYPES` folder
+   
+3) A pairwise distance matrix will be in the `ensemble_matrices` folder
+   
+4) Cluster memberships for each specimen will be in the `clusters_detected` folder
 
 **Geographic Prediction**
 
+1)  A predicted geographic result will be in the `GeoPrediction_output/predictedOut/` folder. We strongly recommend using the predictions in the file with *gatkRegion* in the title.
+   
+2)  VCF for each sample at all SNPs used in geographic prediction will be in the `GeoPrediction_output/variantCalls/` folder
+
 **Drug Resistance Surveillance**
+
+1) A variety of processing files will be output as part of the MaRS drug resistance surveillance pipeline - all of which will be in the `MaRS_output/` folder
+   
+2) The drug resistance primary outputs of interest will be in `MaRS_output/Summary` folder 
+
+**Reports and Trees**
+
+The workflow is not currently set up to generate reports/trees using this GitHub Repo. However, there are some scripts for report/tree generation in the `python_R_scripts/reporting_scripts/` folder. These scripts are not maintained.
+
 
 **Check the readme.txt files**
 
