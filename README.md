@@ -1,10 +1,15 @@
 # *Plasmodium vivax* AmpliSeq Analysis Pipeline - BETA
 
 Org: NCEZID
-Version: 1
+
+Version: Beta
+
 Status: Maintained
+
 Keywords: malaria, surveillance, visualization, genotyping, AMD
+
 Labor Hours: 1000
+
 Contact: ncezid_shareit@cdc.gov
 
 
